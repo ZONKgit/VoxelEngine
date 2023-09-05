@@ -1,0 +1,11 @@
+D:\Desktop\C#\VoxelEngine\VoxelEngine\obj\Debug\VoxelEngine.csprojAssemblyReference.cache
+D:\Desktop\C#\VoxelEngine\VoxelEngine\obj\Debug\VoxelEngine.csproj.CoreCompileInputs.cache
+D:\Desktop\C#\VoxelEngine\VoxelEngine\bin\Debug\VoxelEngine.exe.config
+D:\Desktop\C#\VoxelEngine\VoxelEngine\bin\Debug\VoxelEngine.exe
+D:\Desktop\C#\VoxelEngine\VoxelEngine\bin\Debug\VoxelEngine.pdb
+D:\Desktop\C#\VoxelEngine\VoxelEngine\bin\Debug\OpenTK.dll
+D:\Desktop\C#\VoxelEngine\VoxelEngine\bin\Debug\OpenTK.pdb
+D:\Desktop\C#\VoxelEngine\VoxelEngine\bin\Debug\OpenTK.xml
+D:\Desktop\C#\VoxelEngine\VoxelEngine\obj\Debug\VoxelEngine.csproj.CopyComplete
+D:\Desktop\C#\VoxelEngine\VoxelEngine\obj\Debug\VoxelEngine.exe
+D:\Desktop\C#\VoxelEngine\VoxelEngine\obj\Debug\VoxelEngine.pdb
