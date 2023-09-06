@@ -1,7 +1,6 @@
 ﻿using System;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using VoxelEngine.Classes.Loaders;
 
 
 namespace VoxelEngine.Classes.Renderer
@@ -50,6 +49,48 @@ namespace VoxelEngine.Classes.Renderer
             return null;
         }
 
+        void leftSide(Vector4 UV, Vector3 scale, Vector3 position)
+        {
+            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+        }
+        void rightSide(Vector4 UV, Vector3 scale, Vector3 position)
+        {
+            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+        }
+        void bottomSide(Vector4 UV, Vector3 scale, Vector3 position)
+        {
+            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, 1.0 - position.Z * 2);
+        }
+        void upSide(Vector4 UV, Vector3 scale, Vector3 position)
+        {
+            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, 1.0 - position.Z * 2);
+            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -1.0 - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+        }
+        void frontSide(Vector4 UV, Vector3 scale, Vector3 position)
+        {
+            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+        }
+        void backSide(Vector4 UV, Vector3 scale, Vector3 position)
+        {
+            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+        }
 
         // Рендеринк блока из чанка
         void renderBlock(int x, int y, int z, Block block)
@@ -80,20 +121,12 @@ namespace VoxelEngine.Classes.Renderer
                 {
                     if (checkBlockInChunk(position + new Vector3(1, 0, 0)).id == 0)
                     {
-                        GL.TexCoord2(Side1UV.X, Side1UV.W);GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                        GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+                        leftSide(Side1UV, scale, position);
                     }
                 }
-            
-                else
-                {
-                    GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                    GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                }
+
+                else leftSide(Side1UV, scale, position);
+   
 
 
 
@@ -103,19 +136,10 @@ namespace VoxelEngine.Classes.Renderer
                     {
                         if (checkBlockInChunk(position + new Vector3(-1, 0, 0)).id == 0)
                         {
-                            GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                            GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                            GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                            GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+                            rightSide(Side1UV, scale, position);
                         }
                     }
-                else
-                    {
-                        GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                        GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                    }
+                else rightSide(Side1UV, scale, position);
 
 
                 // Bottom
@@ -123,19 +147,10 @@ namespace VoxelEngine.Classes.Renderer
                 {
                     if (checkBlockInChunk(position + new Vector3(0, 1, 0)).id == 0)
                     {
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, 1.0 - position.Z * 2);
+                        bottomSide(Side1UV, scale, position);
                     }
                 }
-                else
-                {
-                    GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                    GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, 1.0 - position.Z * 2);
-                }
+                else bottomSide(Side1UV, scale, position);
 
 
                 // Up
@@ -143,19 +158,11 @@ namespace VoxelEngine.Classes.Renderer
                 {
                     if (checkBlockInChunk(position + new Vector3(0, -1, 0)).id == 0)
                     {
-                        GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, 1.0 - position.Z * 2);
-                        GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -1.0 - position.Z * 2);
-                        GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+                        upSide(Side1UV, scale, position);
                     }
                 }
-                else
-                {
-                    GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, 1.0 - position.Z * 2);
-                    GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -1.0 - position.Z * 2);
-                    GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                }
+                else upSide(Side1UV, scale, position);
+
 
 
 
@@ -164,20 +171,11 @@ namespace VoxelEngine.Classes.Renderer
                 {
                     if (checkBlockInChunk(position + new Vector3(0, 0, 1)).id == 0)
                     {
-
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+                        frontSide(Side1UV, scale, position);
                     }
                 }
-                else
-                {
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-                }
+                else frontSide(Side1UV, scale, position);
+
 
 
                 // Back
@@ -185,21 +183,10 @@ namespace VoxelEngine.Classes.Renderer
                 {
                     if (checkBlockInChunk(position + new Vector3(0, 0, -1)).id == 0)
                     {
-
-
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                        if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+                        backSide(Side1UV, scale, position);
                     }
                 }
-                else
-                {
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.X, Side1UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                    if (isDebugDraw) GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-                }
+                else backSide(Side1UV, scale, position);
 
 
                 //NO VERTEX CULLING
