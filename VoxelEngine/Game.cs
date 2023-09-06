@@ -52,6 +52,7 @@ namespace VoxelEngine
         {
             GL.LoadIdentity();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearColor(0.1f,0.1f,0.8f,1.0f);
 
 
             // Обновление кадра
