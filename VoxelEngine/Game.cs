@@ -14,6 +14,7 @@ namespace VoxelEngine
 
         FontRenderer testFont = new FontRenderer();
 
+
         public Game(GameWindow window)
         {
             this.window = window;
@@ -52,19 +53,13 @@ namespace VoxelEngine
             GL.LoadIdentity();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+
             // Обновление кадра
             world.Update();
-            this.testFont.drawText(new Vector3(0,0,0), new Vector4(0.0f,0.0f,0.0f,1.0f), "The quick brown fox jumps over the lazy dog!?./| 0123456789-=+");
+            testFont.drawText(new Vector3(0,0,0), new Vector4(0.0f,0.0f,0.0f,1.0f), "The quick brown fox jumps over the lazy dog!?./| 0123456789-=+");
 
 
 
-
-
-            //UI test
-
-            
-
-            //End UI test
 
             window.SwapBuffers();
 

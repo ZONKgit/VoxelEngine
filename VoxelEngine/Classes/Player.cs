@@ -61,7 +61,6 @@ namespace VoxelEngine.Classes
         {
             InputController();
             camera.Update();
-            Console.WriteLine(position);
         }
     }
 }

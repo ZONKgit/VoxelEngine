@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenTK;
 using VoxelEngine.Classes.Renderer;
+using VoxelEngine.Classes.Loaders;
 
 namespace VoxelEngine.Classes
 {
@@ -9,8 +10,10 @@ namespace VoxelEngine.Classes
         public int chunkSize = 16;
         public Vector3 position;
         Blocks blocks = new Blocks();
+        TextureLoader texLoader = new TextureLoader();
         public ChunkRenderer render = new ChunkRenderer();
         public Block [,,] data;
+        public bool debugDraw = true;
 
         public Chunk()
         {
@@ -49,6 +52,12 @@ namespace VoxelEngine.Classes
         void UpdateChunk()
         {
             render.renderData = data;
+
+            render.debugDraw = debugDraw;
+            if (debugDraw)
+            {
+                render.texture = texLoader.LoadTexture("Assets/Textures/Debug/Grid.png");
+            }
         }
 
         public void Update()

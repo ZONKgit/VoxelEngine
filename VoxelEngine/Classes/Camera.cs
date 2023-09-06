@@ -17,6 +17,7 @@ namespace VoxelEngine.Classes
 
         // Position vars
         public Vector3 position;
+        public Vector3 globalPosition;
         public Vector3 rotation;
 
         public Camera(Player player)
@@ -58,7 +59,8 @@ namespace VoxelEngine.Classes
         public void Update()
         {
             InputController();
-               
+
+            globalPosition = player.position + position;
 
             GL.Rotate(rotation.X, 1, 0, 0);
             GL.Rotate(rotation.Y, 0, 1, 0);

@@ -31,7 +31,13 @@ namespace VoxelEngine.Classes.Renderer
 
         public void drawChar(Vector2 pos, char ch, Vector4 color)
         {
-            float[] rectCoord = { 0.0f+pos.X, 0.0f + pos.Y, 1.0f + pos.X, 0.0f + pos.Y, 1.0f + pos.X, 1.0f + pos.Y, 0.0f + pos.X, 1.0f + pos.Y };
+            float[] rectCoord = {
+                0.0f +pos.X, 0.0f + pos.Y,
+                1.0f + pos.X, 0.0f + pos.Y,
+                1.0f + pos.X, 1.0f + pos.Y,
+                0.0f + pos.X, 1.0f + pos.Y };
+
+
             float[] rectTex = { 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f };
 
             GL.Enable(EnableCap.Texture2D);
