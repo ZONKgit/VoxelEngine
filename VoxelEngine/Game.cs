@@ -2,6 +2,7 @@
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using VoxelEngine.Classes;
+using VoxelEngine.Classes.Renderer;
 
 
 namespace VoxelEngine
@@ -10,6 +11,8 @@ namespace VoxelEngine
     {
         public GameWindow window;
         public World world = new World();
+
+        FontRenderer testFont = new FontRenderer();
 
         public Game(GameWindow window)
         {
@@ -49,10 +52,19 @@ namespace VoxelEngine
             GL.LoadIdentity();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-
-
             // Обновление кадра
             world.Update();
+            this.testFont.drawText(new Vector3(0,0,0), new Vector4(0.0f,0.0f,0.0f,1.0f), "The quick brown fox jumps over the lazy dog!?./| 0123456789-=+");
+
+
+
+
+
+            //UI test
+
+            
+
+            //End UI test
 
             window.SwapBuffers();
 
@@ -60,8 +72,14 @@ namespace VoxelEngine
 
         void loaded(object o, EventArgs e)
         {
-            GL.ClearColor(0.3f, 0.3f, 0.3f, 0);
+            GL.ClearColor(0.3f, 0.3f, 0.3f, 0.5f);
             GL.Enable(EnableCap.DepthTest);
+            //GL.Enable(EnableCap.AlphaTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+            GL.Enable(EnableCap.AlphaTest);
+            GL.AlphaFunc(AlphaFunction.Greater, 0.01f);
         }
     }
 }
