@@ -15,7 +15,7 @@ namespace VoxelEngine.Classes.Renderer
         public bool isVertexCulling = true;
 
         public int texture;
-        
+
         public ChunkRenderer(Chunk chunk)
         {
             this.chunk = chunk;
@@ -103,7 +103,7 @@ namespace VoxelEngine.Classes.Renderer
                 GL.BindTexture(TextureTarget.Texture2D, texture);
                 GL.Color4(block.colorR, block.colorG, block.colorB, 1.0f);
             }
-            
+
             GL.Begin(BeginMode.Quads);
             Vector4 Side1UV = new Vector4(0, 0, 1, 1);
 
@@ -126,19 +126,19 @@ namespace VoxelEngine.Classes.Renderer
                 }
 
                 else leftSide(Side1UV, scale, position);
-   
+
 
 
 
 
                 // Right
-                if (checkBlockInChunk(position + new Vector3(-1, 0, 0)) != null )
+                if (checkBlockInChunk(position + new Vector3(-1, 0, 0)) != null)
+                {
+                    if (checkBlockInChunk(position + new Vector3(-1, 0, 0)).id == 0)
                     {
-                        if (checkBlockInChunk(position + new Vector3(-1, 0, 0)).id == 0)
-                        {
-                            rightSide(Side1UV, scale, position);
-                        }
+                        rightSide(Side1UV, scale, position);
                     }
+                }
                 else rightSide(Side1UV, scale, position);
 
 
@@ -192,7 +192,7 @@ namespace VoxelEngine.Classes.Renderer
                 //NO VERTEX CULLING
 
             }
-        
+
             else
             {
                 GL.TexCoord2(Side1UV.X, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
@@ -226,7 +226,7 @@ namespace VoxelEngine.Classes.Renderer
                 GL.TexCoord2(Side1UV.Z, Side1UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
             }
 
-            
+
             GL.End();
         }
     }

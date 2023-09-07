@@ -64,6 +64,7 @@
     <Compile Include="Classes\Block.cs" />
     <Compile Include="Classes\Blocks.cs" />
     <Compile Include="Classes\Chunk.cs" />
+    <Compile Include="Classes\Generators\PerlinNoise.cs" />
     <Compile Include="Classes\Loaders\TextureLoader.cs" />
     <Compile Include="Classes\Renderer\FontRenderer.cs" />
     <Compile Include="Game.cs" />

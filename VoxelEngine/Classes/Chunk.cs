@@ -2,6 +2,7 @@
 using OpenTK;
 using VoxelEngine.Classes.Renderer;
 using VoxelEngine.Classes.Loaders;
+using VoxelEngine.Classes.Generators;
 
 namespace VoxelEngine.Classes
 {
@@ -10,10 +11,11 @@ namespace VoxelEngine.Classes
         public Vector3 chunkSize = new Vector3(16,256,16);
         public Vector3 position;
         Blocks blocks = new Blocks();
-        TextureLoader texLoader = new TextureLoader();
+        TextureLoader textureLoader = new TextureLoader();
         public ChunkRenderer render;
         public Block [,,] data;
         public bool isDebugDraw = true;
+        PerlinNoise noise = new PerlinNoise(3253);
 
         public Chunk()
         {
@@ -32,10 +34,11 @@ namespace VoxelEngine.Classes
                     for (int z = 0; z < (int)chunkSize.Z; z++)
                     {
                         Block block = blocks.air;
-                        float worldX = position.X * (int)chunkSize.X + x;
-                        float worldZ = position.Z * (int)chunkSize.Z + z;
-
+                        int worldX = (int)position.X * (int)chunkSize.X + x;
+                        int worldZ = (int)position.Z * (int)chunkSize.Z + z;
+                        int noiseValue = (int)noise.GetNoise(worldX,worldZ)*12;
                         
+
                         if (y >= 58 && y < 63)
                         {
                             block = blocks.grass;
@@ -53,6 +56,11 @@ namespace VoxelEngine.Classes
                         {
                             block = blocks.air;
                         }
+
+                        if ((int)(noise.GetNoise(worldX, worldZ) * 6)+63 == y)
+                        {
+                            block = blocks.grass;
+                        }
                         data[x, y, z] = block;
                     }
                 }
@@ -67,8 +75,12 @@ namespace VoxelEngine.Classes
             render.isDebugDraw = isDebugDraw;
             if (isDebugDraw)
             {
-                render.texture = texLoader.LoadTexture("Assets/Textures/Debug/Grid.png");
+                render.texture = textureLoader.LoadTexture("Assets/Textures/Debug/Grid.png");
             }
+            //else
+            //{
+            //    render.texture = textureLoader.LoadTexture("Assets/Textures/World/Atlas.png");
+            //}
         }
 
         public void Update()

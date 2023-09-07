@@ -8,6 +8,7 @@ namespace VoxelEngine.Classes.Loaders
     {
         public int LoadTexture(string file)
         {
+            System.Console.WriteLine("Load texture: {0}", file);
             Bitmap bitmap = new Bitmap(file);
 
             int tex;
