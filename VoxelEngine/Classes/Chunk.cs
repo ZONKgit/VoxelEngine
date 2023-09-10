@@ -14,7 +14,7 @@ namespace VoxelEngine.Classes
         TextureLoader textureLoader = new TextureLoader();
         public ChunkRenderer render;
         public Block [,,] data;
-        public bool isDebugDraw = true;
+        public bool isDebugDraw = false;
         PerlinNoise noise = new PerlinNoise(3253);
 
         public Chunk()
@@ -47,11 +47,6 @@ namespace VoxelEngine.Classes
                         {
                             block = blocks.stone;
                         }
-                        //if (y == 1)
-                        //{
-                        //    block = blocks.grass;
-                        //    Console.WriteLine("X:{0} Y:{1} Z:{2}", x, y, z);
-                        //}
                         if (y > 63)
                         {
                             block = blocks.air;
@@ -77,10 +72,11 @@ namespace VoxelEngine.Classes
             {
                 render.texture = textureLoader.LoadTexture("Assets/Textures/Debug/Grid.png");
             }
-            //else
-            //{
-            //    render.texture = textureLoader.LoadTexture("Assets/Textures/World/Atlas.png");
-            //}
+            else
+            {
+                render.texture = textureLoader.LoadTexture("Assets/Textures/World/Atlas.png");
+            }
+            
         }
 
         public void Update()

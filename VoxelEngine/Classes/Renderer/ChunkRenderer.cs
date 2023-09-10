@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
@@ -8,18 +9,39 @@ namespace VoxelEngine.Classes.Renderer
     public class ChunkRenderer
     {
         public Chunk chunk;
-        public Block[,,] renderData;
+        public Block[,,] renderData; // Блоки которые надо рендерить
 
 
-        public bool isDebugDraw;
-        public bool isVertexCulling = true;
+        public bool isDebugDraw; // Рисовать ли сетку геометрии, настраиваеться из Chunk.cs
+        public bool isVertexCulling = true; // Вкл/Выкл VertexCulling
 
-        public int texture;
+        public int texture; // Текстурный алтлас. Задаеться из Chunk.cs и меняеться в зависимости от того включен ли DebugDraw в Chunk.cs
 
+        // Вызываетсья при создании экземпляра
         public ChunkRenderer(Chunk chunk)
         {
             this.chunk = chunk;
         }
+
+        // Номер текстуры в текстурные координаты
+        public Vector4 idTextureToUV(int idTexture = 16)
+        {
+            int atlasSize = 256; // Размер атласа
+            int textureSize = 16; // Размер одной текстуры
+            int texturesPerRow = atlasSize / textureSize; // Количество текстур в одной строке атласа
+
+            int atlasX = idTexture % texturesPerRow; // Координата X в атласе
+            int atlasY = idTexture / texturesPerRow; // Координата Y в атласе
+
+            float uMin = (float)atlasX * (float)textureSize / (float)atlasSize;
+            float uMax = (float)atlasY * (float)textureSize / (float)atlasSize;
+            float vMin = (float)(atlasX+1) * (float)textureSize / (float)atlasSize;
+            float vMax = (float)(atlasY+1) * (float)textureSize / (float)atlasSize;
+
+
+            return new Vector4(uMin, uMax, vMin, vMax); // 0,0,0.0625f,0.0625f 
+        }
+
 
         public void renderChunk()
         {
@@ -29,7 +51,7 @@ namespace VoxelEngine.Classes.Renderer
                 {
                     for (int z = 0; z < chunk.chunkSize.Z; z++)
                     {
-                        if (renderData[x, y, z].id != 0)
+                        if (renderData[x, y, z].blockName != "air")
                         {
                             renderBlock(x, y, z, renderData[x, y, z]);
                         }
@@ -49,47 +71,47 @@ namespace VoxelEngine.Classes.Renderer
             return null;
         }
 
-        void leftSide(Vector4 UV, Vector3 scale, Vector3 position)
+        void leftSide(int textureID, Vector3 scale, Vector3 position)
         {
-            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
         }
-        void rightSide(Vector4 UV, Vector3 scale, Vector3 position)
+        void rightSide(int textureID, Vector3 scale, Vector3 position)
         {
-            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
         }
-        void bottomSide(Vector4 UV, Vector3 scale, Vector3 position)
+            void bottomSide(int textureID, Vector3 scale, Vector3 position)
         {
-            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, 1.0 - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).W); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).W); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
         }
-        void upSide(Vector4 UV, Vector3 scale, Vector3 position)
+        void upSide(int textureID, Vector3 scale, Vector3 position)
         {
-            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, 1.0 - position.Z * 2);
-            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -1.0 - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).Y); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).Y); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
         }
-        void frontSide(Vector4 UV, Vector3 scale, Vector3 position)
+        void frontSide(int textureID, Vector3 scale, Vector3 position)
         {
-            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, -scale.Z - position.Z * 2);
         }
-        void backSide(Vector4 UV, Vector3 scale, Vector3 position)
+        void backSide(int textureID, Vector3 scale, Vector3 position)
         {
-            GL.TexCoord2(UV.X, UV.W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.X, UV.Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
-            GL.TexCoord2(UV.Z, UV.W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).W); GL.Vertex3(scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).X, idTextureToUV(textureID).Y); GL.Vertex3(scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).Y); GL.Vertex3(-scale.X - position.X * 2, -scale.Y - position.Y * 2, scale.Z - position.Z * 2);
+            GL.TexCoord2(idTextureToUV(textureID).Z, idTextureToUV(textureID).W); GL.Vertex3(-scale.X - position.X * 2, scale.Y - position.Y * 2, scale.Z - position.Z * 2);
         }
 
         // Рендеринк блока из чанка
@@ -97,35 +119,29 @@ namespace VoxelEngine.Classes.Renderer
         {
             Vector3 scale = new Vector3(1, 1, 1);
             Vector3 position = new Vector3(x, y, z);
-            if (isDebugDraw)
-            {
-                GL.Enable(EnableCap.Texture2D);
-                GL.BindTexture(TextureTarget.Texture2D, texture);
-                GL.Color4(block.colorR, block.colorG, block.colorB, 1.0f);
-            }
+            GL.Enable(EnableCap.Texture2D);
+            GL.BindTexture(TextureTarget.Texture2D, texture);
+            if (isDebugDraw) GL.Color4(block.colorR, block.colorG, block.colorB, 1.0f);
+
 
             GL.Begin(BeginMode.Quads);
             Vector4 Side1UV = new Vector4(0, 0, 1, 1);
 
-            if (!isDebugDraw)
-            {
-                GL.Color3(block.colorR, block.colorG, block.colorB);
-            }
-
+            GL.Color3(1.0f, 1.0f, 1.0f);
             if (isVertexCulling)//USE VERTEX CULLING
             {
-                Block checkBlock = new Block(0, 0, 0, 0, 0);
+                Block checkBlock = new Block("test block", 0, 0, 0, 0, 0);
 
                 //Left
                 if (checkBlockInChunk(position + new Vector3(1, 0, 0)) != null)
                 {
-                    if (checkBlockInChunk(position + new Vector3(1, 0, 0)).id == 0)
+                    if (checkBlockInChunk(position + new Vector3(1, 0, 0)).isTransparent)
                     {
-                        leftSide(Side1UV, scale, position);
+                        leftSide(block.leftTextureID, scale, position);
                     }
                 }
 
-                else leftSide(Side1UV, scale, position);
+                else leftSide(block.leftTextureID, scale, position);
 
 
 
@@ -134,34 +150,34 @@ namespace VoxelEngine.Classes.Renderer
                 // Right
                 if (checkBlockInChunk(position + new Vector3(-1, 0, 0)) != null)
                 {
-                    if (checkBlockInChunk(position + new Vector3(-1, 0, 0)).id == 0)
+                    if (checkBlockInChunk(position + new Vector3(-1, 0, 0)).isTransparent)
                     {
-                        rightSide(Side1UV, scale, position);
+                        rightSide(block.rightTextureID, scale, position);
                     }
                 }
-                else rightSide(Side1UV, scale, position);
+                else rightSide(block.rightTextureID, scale, position);
 
 
                 // Bottom
-                if (checkBlockInChunk(position + new Vector3(0, 1, 0)) != null)
+                if (checkBlockInChunk(position + new Vector3(0, -1, 0)) != null)
                 {
-                    if (checkBlockInChunk(position + new Vector3(0, 1, 0)).id == 0)
+                    if (checkBlockInChunk(position + new Vector3(0, -1, 0)).isTransparent)
                     {
-                        bottomSide(Side1UV, scale, position);
+                        bottomSide(block.bottomTextureID, scale, position);
                     }
                 }
-                else bottomSide(Side1UV, scale, position);
+                else bottomSide(block.bottomTextureID, scale, position);
 
 
                 // Up
                 if (checkBlockInChunk(position + new Vector3(0, -1, 0)) != null)
                 {
-                    if (checkBlockInChunk(position + new Vector3(0, -1, 0)).id == 0)
+                    if (checkBlockInChunk(position + new Vector3(0, -1, 0)).isTransparent)
                     {
-                        upSide(Side1UV, scale, position);
+                        upSide(block.upTextureID, scale, position);
                     }
                 }
-                else upSide(Side1UV, scale, position);
+                else upSide(block.upTextureID, scale, position);
 
 
 
@@ -169,24 +185,24 @@ namespace VoxelEngine.Classes.Renderer
                 // Front
                 if (checkBlockInChunk(position + new Vector3(0, 0, 1)) != null)
                 {
-                    if (checkBlockInChunk(position + new Vector3(0, 0, 1)).id == 0)
+                    if (checkBlockInChunk(position + new Vector3(0, 0, 1)).isTransparent)
                     {
-                        frontSide(Side1UV, scale, position);
+                        frontSide(block.frontTextureID, scale, position);
                     }
                 }
-                else frontSide(Side1UV, scale, position);
+                else frontSide(block.frontTextureID, scale, position);
 
 
 
                 // Back
                 if (checkBlockInChunk(position + new Vector3(0, 0, -1)) != null)
                 {
-                    if (checkBlockInChunk(position + new Vector3(0, 0, -1)).id == 0)
+                    if (checkBlockInChunk(position + new Vector3(0, 0, -1)).isTransparent)
                     {
-                        backSide(Side1UV, scale, position);
+                        backSide(block.backTextureID, scale, position);
                     }
                 }
-                else backSide(Side1UV, scale, position);
+                else backSide(block.backTextureID, scale, position);
 
 
                 //NO VERTEX CULLING
