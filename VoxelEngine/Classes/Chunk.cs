@@ -62,26 +62,27 @@ namespace VoxelEngine.Classes
             }
         }
 
+        public Block getBlockInPosition(Vector3 pos)
+        {
+            if (pos.X >= 0 && pos.X < data.GetLength(0) &&
+                pos.Y >= 0 && pos.Y < data.GetLength(1) &&
+                pos.Z >= 0 && pos.Z < data.GetLength(2))
+            {
+                return data[(int)pos.X, (int)pos.Y, (int)pos.Z];
+            }
+            return null;
+        }
+
         void UpdateChunk()
         {
-            // Посылание данных в чанк рендринг для рендера чанка
-            render.renderData = data;
-            //Debug draw
-            render.isDebugDraw = isDebugDraw;
-            if (isDebugDraw)
-            {
-                render.texture = textureLoader.LoadTexture("Assets/Textures/Debug/Grid.png");
-            }
-            else
-            {
-                render.texture = textureLoader.LoadTexture("Assets/Textures/World/Atlas.png");
-            }
+            render.texture = textureLoader.LoadTexture("Assets/Textures/World/Atlas.png");
+            render.GenerateMesh();
             
         }
 
         public void Update()
         {
-            render.renderChunk();
+            render.RenderMesh();
         }
     }
 }
